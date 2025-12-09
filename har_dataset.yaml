@@ -1,0 +1,8 @@
+# har_dataset.yaml
+path: D:\HAR\downscaled_image_train_dataset       # <-- change to your root dataset path (Linux path for Jetson)
+train: images\train                  # relative to path (or absolute)
+val: images\val
+test: images\test                    # optional
+
+nc: 5                                # change to number of classes (axe, knife, scissor, socket, climbing, choking, ...)
+names: ['axe','knife','scissor','socket','window']  # change to your class names
