@@ -4,6 +4,7 @@ from collections import Counter
 import os
 import re
 import argparse
+import sys
 import shutil
 import random
 import math
@@ -524,9 +525,9 @@ def augment_class_images(root_dir, target_count=510, classes=None, seed=42, dry_
 
 # integrate CLI
 if __name__ == "__main__":
-    root_dir = "D:\\HAR\\harmful_12"
-    mapping = {"0": "2", "8": "0", "9": "1"}
-    # remove_label_from_dataset(root_dir, class_idxs_to_remove=["1", "3", "4", "2", "5", "6", "7", "10", "11"])
+    root_dir = "D:\\HAR\\child detection\\child_with_toy"
+    mapping = {"2": "0"}
+    # remove_label_from_dataset(root_dir, class_idxs_to_remove=["0"])
     # update_mapping(root_dir, mapping)
     # number_of_instances_train_test_val(root_dir)
     # count_first_chars_per_class(root_dir)
@@ -554,6 +555,13 @@ if __name__ == "__main__":
     # general args
     parser.add_argument("--root-dir", default=".", help="Root dataset directory")
     
+    # Allow shorthand positional action: `python dataset_manipulation.py update`
+    actions = ["combine", "count", "remove", "update", "augment"]
+    if not any(a in sys.argv for a in ("--action", "-a")) and len(sys.argv) > 1 and not sys.argv[1].startswith("-"):
+        if sys.argv[1] in actions:
+            # transform into: --action <value>
+            sys.argv.insert(1, "--action")
+
     args = parser.parse_args()
 
     if args.action == "combine":
@@ -577,7 +585,11 @@ if __name__ == "__main__":
     
     elif args.action == "update":
         if not args.mapping:
-            print("[ERR] --update requires --mapping")
+            import json
+            try:
+                update_mapping(args.root_dir, mapping)
+            except Exception as e:
+                print(f"[ERR] parsing mapping: {e}")
         else:
             import json
             try:
